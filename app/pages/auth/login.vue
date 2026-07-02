@@ -14,8 +14,9 @@
     </div>
 </template>
 <script setup lang="ts">
-
-// import { useApi } from '../../composables/useApi';
+definePageMeta({
+    middleware: 'guest'
+})
 
 const token = useCookie('token')
 const router = useRouter()
