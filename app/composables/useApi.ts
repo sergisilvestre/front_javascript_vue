@@ -33,7 +33,11 @@ export const useApi = () => {
 
   const request = async <T>(
     url: string,
-    options: RequestOptions = {}
+    options: RequestOptions = {
+      headers: {
+        'Authorization': `Bearer ${useCookie('token').value || ''}`,
+      },
+    }
   ): Promise<T> => {
     try {
       return await $fetch<T>(url, {

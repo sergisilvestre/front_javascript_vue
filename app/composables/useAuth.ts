@@ -12,16 +12,12 @@ export const useAuth = () => {
     }
 
     try {
-      const me = await api.request("/auth/check", {
-        headers: {
-          Authorization: `Bearer ${token.value}`,
-        },
-      });
+      const me = await api.request("/auth/check");
 
-      console.log("User data fetched successfully:", me);
+      user.value = me.data.message; 
+      console.log("User data fetched successfully:", user.value);
 
-      user.value = me;
-      return me;
+      return user.value;
     } catch (error) {
       token.value = null;
       user.value = null;
