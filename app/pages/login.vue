@@ -1,6 +1,6 @@
 <template>
     <div class="login">
-        <form @submit.prevent="login" class="form">
+        <form @submit.prevent="loginHandler" class="form">
             <h1 class="title">Login</h1>
 
             <UiBaseInput v-model="email" type="email" placeholder="Email" :disabled="loading" />
@@ -9,14 +9,14 @@
 
             <UiBaseButton type="submit" variant="primary" :loading="loading" title="Login" />
 
-            <p v-if="errorMsg" class="error">
-                {{ errorMsg }}
-            </p>
+            <UiBaseError :errorMsg="errorMsg" />
         </form>
     </div>
 </template>
 <script setup lang="ts">
-const config = useRuntimeConfig()
+
+import { useAuthApi } from '../../composables/useApi'
+
 const token = useCookie('token')
 
 const email = ref('user@mail.com')
@@ -24,30 +24,31 @@ const password = ref('12345678')
 const loading = ref(false)
 const errorMsg = ref('')
 
-const login = async () => {
+const { login } = useAuthApi()
+
+const loginHandler = async () => {
     loading.value = true
     errorMsg.value = ''
 
     try {
-        const res: any = await $fetch('/auth/login', {
-            baseURL: config.public.apiBase,
-            method: 'POST',
-            body: {
-                email: email.value,
-                password: password.value,
-            },
-        })
+        const res = await login(email.value, password.value)
 
-        if (!res || !res.data) {
+        if (!res?.data?.token) {
             throw new Error('Invalid response')
         }
 
-        token.value = res.data?.token ?? res.token
-        localStorage.setItem('token', token.value);
+        token.value = res.data.token
+        localStorage.setItem('token', token.value)
+
         console.log('Login success')
-    } catch (err) {
-        console.error(err)
-        errorMsg.value = 'Login failed'
+    } catch (err: any) {
+        console.log('FULL ERROR:', err)
+
+        errorMsg.value =
+            err.validationErrors
+                ? Object.values(err.validationErrors).flat().join(', ')
+                : err.message
+
         token.value = null
     } finally {
         loading.value = false

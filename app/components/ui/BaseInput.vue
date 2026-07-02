@@ -8,6 +8,7 @@
       v-model="model"
       :type="type"
       :placeholder="placeholder"
+      :disabled="disabled"
       :class="['input', { error }]"
     />
 
@@ -22,7 +23,8 @@ defineProps({
   label: String,
   type: { type: String, default: 'text' },
   placeholder: String,
-  error: String
+  error: String,
+  disabled: Boolean
 })
 
 const model = defineModel()
