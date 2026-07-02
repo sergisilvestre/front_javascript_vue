@@ -12,9 +12,15 @@ export const useAuth = () => {
     }
 
     try {
-      const me = await api.request("/auth/check");
+      let me = {
+        data: {
+          message: {},
+        },
+      };
 
-      user.value = me.data.message; 
+      me = await api.request("/auth/check");
+
+      user.value = me.data.message;
       console.log("User data fetched successfully:", user.value);
 
       return user.value;
