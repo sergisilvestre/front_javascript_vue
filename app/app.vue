@@ -10,7 +10,8 @@ body {
     padding: 0;
 }
 
-input, button {
-  box-sizing: border-box;
+input,
+button {
+    box-sizing: border-box;
 }
 </style>

@@ -15,23 +15,29 @@
 </template>
 <script setup lang="ts">
 
-import { useAuthApi } from '../../composables/useApi'
+// import { useApi } from '../../composables/useApi';
 
 const token = useCookie('token')
+const router = useRouter()
+const { request } = useApi()
 
 const email = ref('user@mail.com')
 const password = ref('12345678')
 const loading = ref(false)
 const errorMsg = ref('')
 
-const { login } = useAuthApi()
-
 const loginHandler = async () => {
     loading.value = true
     errorMsg.value = ''
 
     try {
-        const res = await login(email.value, password.value)
+        const res = await request('/auth/login', {
+            method: 'POST',
+            body: {
+                email: email.value,
+                password: password.value,
+            },
+        })
 
         if (!res?.data?.token) {
             throw new Error('Invalid response')
@@ -41,6 +47,8 @@ const loginHandler = async () => {
         localStorage.setItem('token', token.value)
 
         console.log('Login success')
+
+        await router.push('/auth/home')
     } catch (err: any) {
         console.log('FULL ERROR:', err)
 
