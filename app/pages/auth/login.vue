@@ -19,6 +19,8 @@ definePageMeta({
 })
 
 const token = useCookie('token')
+const ttl = useCookie('ttl')
+
 const router = useRouter()
 const { request } = useApi()
 
@@ -45,7 +47,10 @@ const loginHandler = async () => {
         }
 
         token.value = res.data.token
+        ttl.value = res.data.ttl
+
         localStorage.setItem('token', token.value)
+        localStorage.setItem('ttl', ttl.value)
 
         console.log('Login success')
 

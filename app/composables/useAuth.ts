@@ -2,7 +2,7 @@
 export const useAuth = () => {
   const token = useCookie<string | null>("token");
   const user = useState<any | null>("user", () => null);
-
+  const router = useRouter();
   const api = useApi();
 
   const checkAuth = async () => {
@@ -25,16 +25,29 @@ export const useAuth = () => {
 
       return user.value;
     } catch (error) {
+      console.error("Error fetching user data:", error);
+      if (error.response && error.response.status === 401) {
+        console.log("Token is invalid or expired. Logging out...");
+        localStorage.removeItem("token");
+      }
+
       token.value = null;
       user.value = null;
       return null;
     }
   };
 
-  const logout = () => {
+  const logout = async () => {
+    let loggedOut = await api.request("/auth/logout", { method: "POST" });
+
     token.value = null;
     user.value = null;
-    navigateTo("/auth/login");
+
+    if (loggedOut) {
+      console.log("User logged out successfully.");
+      localStorage.removeItem("token");
+      location.reload();
+    }
   };
 
   return {
