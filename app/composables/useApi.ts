@@ -39,15 +39,47 @@ export const useApi = () => {
 
   const apiLoadingCount = useState<number>('apiLoadingCount', () => 0)
   const apiLoading = useState<boolean>('apiLoading', () => false)
+  const apiLoadingStartedAt = useState<number | null>('apiLoadingStartedAt', () => null)
+  let apiLoadingTimeout: ReturnType<typeof setTimeout> | null = null
+
+  const MIN_LOADING_DURATION = 500
 
   const startLoading = () => {
+    if (apiLoadingCount.value === 0) {
+      apiLoadingStartedAt.value = Date.now()
+      apiLoading.value = true
+    }
+
     apiLoadingCount.value += 1
-    apiLoading.value = true
+
+    if (apiLoadingTimeout) {
+      clearTimeout(apiLoadingTimeout)
+      apiLoadingTimeout = null
+    }
   }
 
   const stopLoading = () => {
     apiLoadingCount.value = Math.max(0, apiLoadingCount.value - 1)
-    apiLoading.value = apiLoadingCount.value > 0
+
+    if (apiLoadingCount.value > 0) {
+      return
+    }
+
+    const startedAt = apiLoadingStartedAt.value ?? Date.now()
+    const elapsed = Date.now() - startedAt
+    const remaining = Math.max(0, MIN_LOADING_DURATION - elapsed)
+
+    if (apiLoadingTimeout) {
+      clearTimeout(apiLoadingTimeout)
+    }
+
+    apiLoadingTimeout = setTimeout(() => {
+      if (apiLoadingCount.value === 0) {
+        apiLoading.value = false
+        apiLoadingStartedAt.value = null
+      }
+      apiLoadingTimeout = null
+    }, remaining)
   }
 
   const request = async <T>(
@@ -64,6 +96,7 @@ export const useApi = () => {
     }
 
     startLoading()
+
     try {
       return await $fetch<T>(url, {
         baseURL: config.public.apiBase,
