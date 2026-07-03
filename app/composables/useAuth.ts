@@ -3,6 +3,7 @@ export const useAuth = () => {
   const token = useCookie<string | null>("token");
   const ttl = useCookie<string | null>("ttl");
   const user = useState<any | null>("user", () => null);
+  const isLoggedIn = useState<boolean>("isLoggedIn", () => false);
   const api = useApi();
 
   if (process.client) {
@@ -34,6 +35,7 @@ export const useAuth = () => {
     token.value = null;
     ttl.value = null;
     user.value = null;
+    isLoggedIn.value = false;
 
     if (process.client) {
       localStorage.removeItem("token");
@@ -46,6 +48,7 @@ export const useAuth = () => {
   const checkAuth = async () => {
     if (!token.value) {
       user.value = null;
+      isLoggedIn.value = false;
       return null;
     }
 
@@ -56,9 +59,10 @@ export const useAuth = () => {
         },
       };
 
-      me = await api.request("/auth/check");
+      me = await api.request("/auth/check", {}, false);
 
       user.value = me.data.message;
+      isLoggedIn.value = true;
       console.log("User data fetched successfully:", user.value);
 
       return user.value;
@@ -128,6 +132,7 @@ export const useAuth = () => {
   return {
     token,
     user,
+    isLoggedIn,
     checkAuth,
     refresh,
     revoke,

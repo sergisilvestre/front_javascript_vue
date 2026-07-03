@@ -84,7 +84,8 @@ export const useApi = () => {
 
   const request = async <T>(
     url: string,
-    options: RequestOptions = {}
+    options: RequestOptions = {},
+    showLoading: boolean = true
   ): Promise<T> => {
     const cookieToken = useCookie<string | null>('token').value
     const fallbackToken = process.client ? localStorage.getItem('token') : null
@@ -95,7 +96,9 @@ export const useApi = () => {
       ...options.headers,
     }
 
-    startLoading()
+    if (showLoading) {
+      startLoading()
+    }
 
     try {
       return await $fetch<T>(url, {
@@ -110,7 +113,9 @@ export const useApi = () => {
       console.log('request', request)
       throw normalizeError(err)
     } finally {
-      stopLoading()
+      if (showLoading) {
+        stopLoading()
+      }
     }
   }
 
