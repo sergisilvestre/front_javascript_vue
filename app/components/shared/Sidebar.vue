@@ -14,7 +14,7 @@
             <hr style="width: 100%; margin: 20px 0px;" />
             <div style="display: flex; flex-direction: column; margin-bottom: auto;">
                 <UiBaseSidebarLink text="Profile" to="/auth/profile" />
-                <UiBaseSidebarLink text="Users" to="/auth/users" />
+                <UiBaseSidebarLink text="Users" to="/auth/user" />
             </div>
             <div style="display: flex; flex-direction: column; gap: 10px;">
                 <UiBaseSidebarLink text="Logout" @click="handleLogout" />
@@ -23,7 +23,7 @@
     </div>
 </template>
 <script setup lang="ts">
-import avatar from '../../../assets/images/avatar.webp'
+import avatar from '@/assets/images/avatar.webp'
 
 const handleLogout = async () => {
     const { logout } = useAuth()
