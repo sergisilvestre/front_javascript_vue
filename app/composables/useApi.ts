@@ -23,6 +23,12 @@ export const useApi = () => {
       'Request failed'
     )
 
+    error.status =
+      err?.response?.status ||
+      err?.status ||
+      err?.statusCode ||
+      null
+    error.response = err?.response ?? null
     error.validationErrors =
       err?.data?.errors ||
       err?.response?._data?.errors ||
@@ -35,8 +41,12 @@ export const useApi = () => {
     url: string,
     options: RequestOptions = {}
   ): Promise<T> => {
+    const cookieToken = useCookie<string | null>('token').value
+    const fallbackToken = process.client ? localStorage.getItem('token') : null
+    const authToken = cookieToken || fallbackToken || ''
+
     const headers = {
-      Authorization: `Bearer ${useCookie('token').value || ''}`,
+      ...(authToken ? { Authorization: `Bearer ${authToken}` } : {}),
       ...options.headers,
     }
 

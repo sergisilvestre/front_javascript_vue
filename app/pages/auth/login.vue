@@ -26,7 +26,8 @@ const { request } = useApi()
 
 const email = ref('user@mail.com')
 const password = ref('12345678')
-const loading = ref(false)
+// const loading = ref(false)
+const loading = ref(true)
 const errorMsg = ref('')
 
 const loginHandler = async () => {
