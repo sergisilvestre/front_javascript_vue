@@ -37,6 +37,19 @@ export const useApi = () => {
     return error
   }
 
+  const apiLoadingCount = useState<number>('apiLoadingCount', () => 0)
+  const apiLoading = useState<boolean>('apiLoading', () => false)
+
+  const startLoading = () => {
+    apiLoadingCount.value += 1
+    apiLoading.value = true
+  }
+
+  const stopLoading = () => {
+    apiLoadingCount.value = Math.max(0, apiLoadingCount.value - 1)
+    apiLoading.value = apiLoadingCount.value > 0
+  }
+
   const request = async <T>(
     url: string,
     options: RequestOptions = {}
@@ -50,6 +63,7 @@ export const useApi = () => {
       ...options.headers,
     }
 
+    startLoading()
     try {
       return await $fetch<T>(url, {
         baseURL: config.public.apiBase,
@@ -59,11 +73,11 @@ export const useApi = () => {
         headers,
       })
     } catch (err: any) {
-      
-      console.log('API request error:', err);
-      console.log('request', request);
-
+      console.log('API request error:', err)
+      console.log('request', request)
       throw normalizeError(err)
+    } finally {
+      stopLoading()
     }
   }
 

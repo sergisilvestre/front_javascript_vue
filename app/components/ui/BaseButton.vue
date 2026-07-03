@@ -1,11 +1,9 @@
 <template>
   <button
     :type="type"
-    :disabled="disabled || loading"
-    :class="['btn', variant, { loading }]"
+    :class="['btn', variant]"
   >
     {{ title }}
-    <span v-if="loading" class="spinner"></span>
     <slot />
   </button>
 </template>
@@ -14,7 +12,6 @@
 defineProps({
   type: { type: String, default: 'button' },
   variant: { type: String, default: 'primary' },
-  loading: Boolean,
   title: { type: String, default: 'Submit' },
   disabled: Boolean
 })
@@ -33,11 +30,6 @@ defineProps({
 
 .btn:hover {
   background: #000000;
-}
-
-.btn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
 }
 
 </style>

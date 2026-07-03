@@ -1,16 +1,20 @@
 <template>
     <div>
         <NuxtPage />
-        <UiBaseLoadingPage/>
+        <UiBaseLoadingPage v-if="loading" />
     </div>
 </template>
 <script setup lang="ts">
 const { checkAuth } = useAuth()
+const startupLoading = useState<boolean>('appStartupLoading', () => true)
+const apiLoading = useState<boolean>('apiLoading', () => false)
+const loading = computed(() => startupLoading.value || apiLoading.value)
 
 let intervalId: ReturnType<typeof setInterval>
 
 onMounted(async () => {
     await checkAuth()
+    startupLoading.value = false
 
     intervalId = setInterval(async () => {
         await checkAuth()
@@ -31,4 +35,4 @@ input,
 button {
     box-sizing: border-box;
 }
-</style>
+</style> 
