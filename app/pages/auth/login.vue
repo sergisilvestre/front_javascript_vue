@@ -29,7 +29,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import { authApi } from "../../../services/api/auth.api";
+import { authService } from "~/app/services/auth.service";
 
 definePageMeta({
   middleware: "guest",
@@ -49,7 +49,7 @@ const loginHandler = async () => {
   errorMsg.value = "";
 
   try {
-    const response = await authApi.login(request, {
+    const response = await authService.login(request, {
       email: email.value,
       password: password.value,
     });

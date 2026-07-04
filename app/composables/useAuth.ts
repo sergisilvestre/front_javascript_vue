@@ -1,5 +1,5 @@
 import type { AuthResponse, AuthUser } from "../types/auth";
-import { authApi } from "../../services/api/auth.api";
+import { authService } from "../services/auth.service";
 
 export const useAuth = () => {
   const token = useCookie<string | null>("token");
@@ -60,7 +60,7 @@ export const useAuth = () => {
     }
 
     try {
-      const response = await authApi.check(api.request);
+      const response = await authService.check(api.request);
       user.value = response.message;
       isLoggedIn.value = true;
       return user.value;
@@ -77,7 +77,7 @@ export const useAuth = () => {
 
   const refresh = async () => {
     try {
-      const response = await authApi.refresh(api.request);
+      const response = await authService.refresh(api.request);
       setAuthState(response);
       return response;
     } catch (error: any) {
@@ -91,7 +91,7 @@ export const useAuth = () => {
 
   const logout = async () => {
     try {
-      await authApi.logout(api.request);
+      await authService.logout(api.request);
     } catch (error) {
       console.warn("Logout request failed:", error);
     }
@@ -101,7 +101,7 @@ export const useAuth = () => {
 
   const revoke = async () => {
     try {
-      await authApi.revoke(api.request);
+      await authService.revoke(api.request);
     } catch (error) {
       console.warn("Revoke request failed:", error);
     }
