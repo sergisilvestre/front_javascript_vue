@@ -29,20 +29,17 @@
 </template>
 
 <script setup lang="ts">
+import type { User } from "../../../types/user";
+import { userApi } from "../../../../services/api/user.api";
+
 definePageMeta({
   middleware: "auth",
 });
 
-interface User {
-  id: number;
-  name: string;
-  email: string;
-}
-
 const items = ref<User[]>([]);
-
 const api = useApi();
-const response = await api.request<User[] | { data: User[] }>("/user");
+
+const response = await userApi.list(api.request);
 items.value = Array.isArray(response) ? response : (response.data ?? []);
 </script>
 <style scoped></style>

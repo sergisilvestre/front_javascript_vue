@@ -29,20 +29,19 @@
   </div>
 </template>
 <script setup lang="ts">
+import { authApi } from "../../../services/api/auth.api";
+
 definePageMeta({
   middleware: "guest",
 });
 
-const token = useCookie("token");
-const ttl = useCookie("ttl");
-
 const router = useRouter();
 const { request } = useApi();
+const { saveUserAuthInfo } = useAuth();
 
 const email = ref("user@mail.com");
 const password = ref("12345678");
-// const loading = ref(false)
-const loading = ref(true);
+const loading = ref(false);
 const errorMsg = ref("");
 
 const loginHandler = async () => {
@@ -50,35 +49,17 @@ const loginHandler = async () => {
   errorMsg.value = "";
 
   try {
-    const res = await request("/auth/login", {
-      method: "POST",
-      body: {
-        email: email.value,
-        password: password.value,
-      },
+    const response = await authApi.login(request, {
+      email: email.value,
+      password: password.value,
     });
 
-    if (!res?.data?.token) {
-      throw new Error("Invalid response");
-    }
-
-    token.value = res.data.token;
-    ttl.value = res.data.ttl;
-
-    localStorage.setItem("token", token.value);
-    localStorage.setItem("ttl", ttl.value);
-
-    console.log("Login success");
-
-    await router.push("/auth/home");
+    saveUserAuthInfo(response.token, response.ttl, response.user);
+    await navigateTo("/auth/home", { replace: true });
   } catch (err: any) {
-    console.log("FULL ERROR:", err);
-
     errorMsg.value = err.validationErrors
       ? Object.values(err.validationErrors).flat().join(", ")
       : err.message;
-
-    token.value = null;
   } finally {
     loading.value = false;
   }

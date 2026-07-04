@@ -1,12 +1,14 @@
-// composables/useAuth.ts
+import type { AuthResponse, AuthUser } from "../types/auth";
+import { authApi } from "../../services/api/auth.api";
+
 export const useAuth = () => {
   const token = useCookie<string | null>("token");
   const ttl = useCookie<string | null>("ttl");
-  const user = useState<any | null>("user", () => null);
+  const user = useState<AuthUser | null>("user", () => null);
   const isLoggedIn = useState<boolean>("isLoggedIn", () => false);
   const api = useApi();
 
-  if (process.client) {
+  if (import.meta.client) {
     const storedToken = localStorage.getItem("token");
     const storedTtl = localStorage.getItem("ttl");
 
@@ -19,30 +21,35 @@ export const useAuth = () => {
     }
   }
 
-  interface User {
-    id: number;
-    name: string;
-    email: string;
-  }
+  const setAuthState = (auth: Partial<AuthResponse> | null) => {
+    token.value = auth?.token ?? null;
+    ttl.value = auth?.ttl ?? null;
+    user.value = auth?.user ?? user.value ?? null;
+    isLoggedIn.value = Boolean(auth?.user || user.value);
 
-  interface AuthResponse {
-    token: string;
-    ttl: string;
-    user: User;
-  }
+    if (import.meta.client) {
+      if (auth?.token) {
+        localStorage.setItem("token", auth.token);
+      } else {
+        localStorage.removeItem("token");
+      }
+
+      if (auth?.ttl) {
+        localStorage.setItem("ttl", auth.ttl);
+      } else {
+        localStorage.removeItem("ttl");
+      }
+    }
+  };
 
   const clearAuthState = () => {
-    token.value = null;
-    ttl.value = null;
+    setAuthState(null);
     user.value = null;
     isLoggedIn.value = false;
 
-    if (process.client) {
-      localStorage.removeItem("token");
-      localStorage.removeItem("ttl");
+    if (import.meta.client) {
+      location.reload();
     }
-
-    location.reload();
   };
 
   const checkAuth = async () => {
@@ -53,24 +60,12 @@ export const useAuth = () => {
     }
 
     try {
-      let me = {
-        data: {
-          message: {},
-        },
-      };
-
-      me = await api.request("/auth/check", {}, false);
-
-      user.value = me.data.message;
+      const response = await authApi.check(api.request);
+      user.value = response.message;
       isLoggedIn.value = true;
-      console.log("User data fetched successfully:", user.value);
-
       return user.value;
     } catch (error: any) {
-      console.error("Error fetching user data:", error);
-
       if (error.status === 401 || error.response?.status === 401) {
-        console.log("Token is invalid or expired. Clearing auth state...");
         clearAuthState();
         return null;
       }
@@ -82,14 +77,10 @@ export const useAuth = () => {
 
   const refresh = async () => {
     try {
-      const res = await api.request("/auth/refresh", { method: "POST" });
-      saveUserAuthInfo(res.data.token, res.data.ttl);
-      token.value = res.data.token;
-      ttl.value = res.data.ttl;
-      return res.data;
+      const response = await authApi.refresh(api.request);
+      setAuthState(response);
+      return response;
     } catch (error: any) {
-      console.error("Error refreshing token:", error);
-
       if (error.status === 401 || error.response?.status === 401) {
         clearAuthState();
       }
@@ -100,33 +91,30 @@ export const useAuth = () => {
 
   const logout = async () => {
     try {
-      await api.request("/auth/logout", { method: "POST" });
+      await authApi.logout(api.request);
     } catch (error) {
       console.warn("Logout request failed:", error);
     }
 
     clearAuthState();
-
-    if (process.client) {
-      location.reload();
-    }
   };
 
   const revoke = async () => {
-    await api.request("/auth/revoke", { method: "POST" });
-    localStorage.removeItem("token");
-    localStorage.removeItem("ttl");
-    token.value = null;
-    ttl.value = null;
-    user.value = null;
-    location.reload();
+    try {
+      await authApi.revoke(api.request);
+    } catch (error) {
+      console.warn("Revoke request failed:", error);
+    }
+
+    clearAuthState();
   };
 
-  const saveUserAuthInfo = (tokenValue: string, ttlValue: string) => {
-    token.value = tokenValue;
-    ttl.value = ttlValue;
-    localStorage.setItem("token", tokenValue);
-    localStorage.setItem("ttl", ttlValue);
+  const saveUserAuthInfo = (tokenValue: string, ttlValue: string, authUser?: AuthUser | null) => {
+    setAuthState({
+      token: tokenValue,
+      ttl: ttlValue,
+      user: authUser ?? user.value ?? null,
+    });
   };
 
   return {

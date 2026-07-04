@@ -23,56 +23,50 @@
     </div>
 </template>
 <script setup lang="ts">
+import { userApi } from "../../../../services/api/user.api";
+
 definePageMeta({
-    middleware: "auth",
+  middleware: "auth",
 });
 
 const form = reactive({
-    name: "",
-    email: "",
-    password: ""
+  name: "",
+  email: "",
+  password: "",
 });
 
 const formErrors = reactive<Record<string, string>>({
-    name: "",
-    email: "",
-    password: ""
+  name: "",
+  email: "",
+  password: "",
 });
 
 const { request } = useApi();
 
 const resetFormErrors = () => {
-    Object.keys(formErrors).forEach((key) => {
-        formErrors[key] = "";
-    });
+  Object.keys(formErrors).forEach((key) => {
+    formErrors[key] = "";
+  });
 };
 
 const submitForm = async () => {
-    resetFormErrors();
+  resetFormErrors();
 
-    try {
-        const response = await request("/user", {
-            method: "POST",
-            body: {
-                name: form.name,
-                email: form.email,
-                password: form.password
-            },
-        });
+  try {
+    await userApi.create(request, {
+      name: form.name,
+      email: form.email,
+      password: form.password,
+    });
+  } catch (error: any) {
+    const validationErrors = error?.validationErrors ?? {};
 
-        console.log("User created:", response);
-    } catch (error: any) {
-        console.error("Error creating user:", error);
-
-        const validationErrors = error?.validationErrors ?? {};
-
-        Object.keys(formErrors).forEach((key) => {
-            const fieldErrors = validationErrors[key];
-            formErrors[key] = Array.isArray(fieldErrors)
-                ? fieldErrors.join(", ")
-                : "";
-        });
-    }
+    Object.keys(formErrors).forEach((key) => {
+      const fieldErrors = validationErrors[key];
+      formErrors[key] = Array.isArray(fieldErrors)
+        ? fieldErrors.join(", ")
+        : "";
+    });
+  }
 };
-
 </script>

@@ -1,31 +1,8 @@
+import type { RequestOptions, ApiError } from "../../services/api/http.client";
+import { normalizeError } from "../../services/api/http.client";
+
 export const useApi = () => {
   const config = useRuntimeConfig();
-
-  type HttpMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
-
-  type RequestOptions = {
-    method?: HttpMethod;
-    body?: any;
-    params?: Record<string, any>;
-    headers?: Record<string, string>;
-  };
-
-  const normalizeError = (err: any) => {
-    const error: any = new Error(
-      err?.data?.message ||
-        err?.response?._data?.message ||
-        err?.message ||
-        "Request failed",
-    );
-
-    error.status =
-      err?.response?.status || err?.status || err?.statusCode || null;
-    error.response = err?.response ?? null;
-    error.validationErrors =
-      err?.data?.errors || err?.response?._data?.errors || null;
-
-    return error;
-  };
 
   const apiLoadingCount = useState<number>("apiLoadingCount", () => 0);
   const apiLoading = useState<boolean>("apiLoading", () => false);
@@ -81,7 +58,7 @@ export const useApi = () => {
     showLoading: boolean = true,
   ): Promise<T> => {
     const cookieToken = useCookie<string | null>("token").value;
-    const fallbackToken = process.client ? localStorage.getItem("token") : null;
+    const fallbackToken = import.meta.client ? localStorage.getItem("token") : null;
     const authToken = cookieToken || fallbackToken || "";
 
     const headers = {
@@ -97,14 +74,12 @@ export const useApi = () => {
       return await $fetch<T>(url, {
         baseURL: config.public.apiBase,
         method: options.method || "GET",
-        body: options.body,
-        query: options.params, // 👈 important rename
+        body: options.body as BodyInit | Record<string, unknown> | null | undefined,
+        query: options.params,
         headers,
       });
-    } catch (err: any) {
-      console.log("API request error:", err);
-      console.log("request", request);
-      throw normalizeError(err);
+    } catch (err: unknown) {
+      throw normalizeError(err as ApiError);
     } finally {
       if (showLoading) {
         stopLoading();
@@ -114,5 +89,6 @@ export const useApi = () => {
 
   return {
     request,
+    apiLoading,
   };
 };

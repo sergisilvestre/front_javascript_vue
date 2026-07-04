@@ -27,82 +27,73 @@
                 <UiBaseError :errorMsg="formErrors.password" />
             </div>
             <div>
-                <UiBaseButton @click="submitForm" title="Create User" />
+                <UiBaseButton @click="submitForm" title="Update" />
             </div>
         </div>
 
     </div>
 </template>
 <script setup lang="ts">
+import { userApi } from "../../../../services/api/user.api";
+
 definePageMeta({
-    middleware: "auth",
+  middleware: "auth",
 });
 
-const route = useRoute()
-const item_id = route.params.id
-const item = JSON.parse(route.query.item as string)
+const route = useRoute();
+const itemId = route.params.id as string;
+const item = JSON.parse(route.query.item as string);
 const router = useRouter();
 
 const form = reactive({
-    name: item.name,
-    email: item.email,
-    password: ""
+  name: item.name,
+  email: item.email,
+  password: "",
 });
 
 const formErrors = reactive<Record<string, string>>({
-    name: "",
-    email: "",
-    password: ""
+  name: "",
+  email: "",
+  password: "",
 });
 
 const { request } = useApi();
 
 const resetFormErrors = () => {
-    Object.keys(formErrors).forEach((key) => {
-        formErrors[key] = "";
-    });
+  Object.keys(formErrors).forEach((key) => {
+    formErrors[key] = "";
+  });
 };
 
 const submitForm = async () => {
-    resetFormErrors();
+  resetFormErrors();
 
-    try {
-        const response = await request(`/user/${item_id}`, {
-            method: "PUT",
-            body: {
-                name: form.name,
-                email: form.email,
-                password: form.password
-            },
-        });
+  try {
+    await userApi.update(request, itemId, {
+      name: form.name,
+      email: form.email,
+      password: form.password,
+    });
 
-        console.log("User created:", response);
-    } catch (error: any) {
-        console.error("Error creating user:", error);
+    await router.push("/auth/user");
+  } catch (error: any) {
+    const validationErrors = error?.validationErrors ?? {};
 
-        const validationErrors = error?.validationErrors ?? {};
-
-        Object.keys(formErrors).forEach((key) => {
-            const fieldErrors = validationErrors[key];
-            formErrors[key] = Array.isArray(fieldErrors)
-                ? fieldErrors.join(", ")
-                : "";
-        });
-    }
+    Object.keys(formErrors).forEach((key) => {
+      const fieldErrors = validationErrors[key];
+      formErrors[key] = Array.isArray(fieldErrors)
+        ? fieldErrors.join(", ")
+        : "";
+    });
+  }
 };
 
 const deleteUser = async () => {
-    try {
-        const response = await request(`/user/${item_id}`, {
-            method: "DELETE",
-        });
-
-        console.log("User deleted:", response);
-
-        await router.push("/auth/user");
-    } catch (error: any) {
-        console.error("Error deleting user:", error);
-    }
+  try {
+    await userApi.remove(request, itemId);
+    await router.push("/auth/user");
+  } catch (error: any) {
+    console.error("Error deleting user:", error);
+  }
 };
-
 </script>
