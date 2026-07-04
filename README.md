@@ -21,3 +21,7 @@ docker build -t front_javascript_vue .
 
 ## 
 docker compose up -d --build
+```
+
+## 
+npx prettier . --write

@@ -1,8 +1,5 @@
 <template>
-  <button
-    :type="type"
-    :class="['btn', variant]"
-  >
+  <button :type="type" :class="['btn', variant]">
     {{ title }}
     <slot />
   </button>
@@ -10,11 +7,11 @@
 
 <script setup>
 defineProps({
-  type: { type: String, default: 'button' },
-  variant: { type: String, default: 'primary' },
-  title: { type: String, default: 'Submit' },
-  disabled: Boolean
-})
+  type: { type: String, default: "button" },
+  variant: { type: String, default: "primary" },
+  title: { type: String, default: "Submit" },
+  disabled: Boolean,
+});
 </script>
 
 <style scoped>
@@ -31,5 +28,4 @@ defineProps({
 .btn:hover {
   background: #000000;
 }
-
 </style>

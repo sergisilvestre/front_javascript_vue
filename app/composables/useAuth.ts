@@ -7,15 +7,15 @@ export const useAuth = () => {
   const api = useApi();
 
   if (process.client) {
-    const storedToken = localStorage.getItem("token")
-    const storedTtl = localStorage.getItem("ttl")
+    const storedToken = localStorage.getItem("token");
+    const storedTtl = localStorage.getItem("ttl");
 
     if (!token.value && storedToken) {
-      token.value = storedToken
+      token.value = storedToken;
     }
 
     if (!ttl.value && storedTtl) {
-      ttl.value = storedTtl
+      ttl.value = storedTtl;
     }
   }
 

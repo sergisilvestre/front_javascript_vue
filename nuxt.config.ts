@@ -6,6 +6,4 @@ export default defineNuxtConfig({
   },
   ssr: false,
   components: true,
-  
-
 });

@@ -18,6 +18,7 @@
   "compilerOptions": {
     "paths": {
       "@/*": ["./app/*"]
-    }
+    },
+    "strict": true
   }
 }

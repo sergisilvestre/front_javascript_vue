@@ -21,13 +21,13 @@
 <script setup>
 defineProps({
   label: String,
-  type: { type: String, default: 'text' },
+  type: { type: String, default: "text" },
   placeholder: String,
   error: String,
-  disabled: Boolean
-})
+  disabled: Boolean,
+});
 
-const model = defineModel()
+const model = defineModel();
 </script>
 
 <style scoped>
