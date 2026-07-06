@@ -10,6 +10,7 @@
       :placeholder="placeholder"
       :disabled="disabled"
       :class="['input', { error }]"
+      :autocomplete="autocomplete"
     />
 
     <p v-if="error" class="input-error">
@@ -25,6 +26,7 @@ defineProps({
   placeholder: String,
   error: String,
   disabled: Boolean,
+  autocomplete: { type: String, default: "off" },
 });
 
 const model = defineModel();

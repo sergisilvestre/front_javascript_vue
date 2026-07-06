@@ -4,6 +4,6 @@ export default defineNuxtRouteMiddleware(async () => {
   await checkAuth();
 
   if (user.value) {
-    return navigateTo("/auth/home");
+    return navigateTo("/auth/user");
   }
 });

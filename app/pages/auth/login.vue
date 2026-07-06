@@ -29,7 +29,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import { authService } from "~/app/services/auth.service";
+import { authService } from "@/services/auth.service";
 
 definePageMeta({
   middleware: "guest",
@@ -55,7 +55,7 @@ const loginHandler = async () => {
     });
 
     saveUserAuthInfo(response.token, response.ttl, response.user);
-    await navigateTo("/auth/home", { replace: true });
+    await navigateTo("/auth/user", { replace: true });
   } catch (err: any) {
     errorMsg.value = err.validationErrors
       ? Object.values(err.validationErrors).flat().join(", ")

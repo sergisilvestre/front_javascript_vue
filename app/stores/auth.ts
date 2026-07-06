@@ -1,4 +1,4 @@
-import type { AuthUser } from "~/app/types/auth";
+import type { AuthUser } from "@/types/auth";
 
 export const authStore = {
   user: null as AuthUser | null,

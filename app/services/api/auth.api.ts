@@ -1,5 +1,5 @@
-import type { AuthResponse, AuthUser, LoginPayload } from "../../app/types/auth";
-import type { ApiRequest } from "./http.client";
+import type { AuthResponse, AuthUser, LoginPayload } from "@/types/auth";
+import type { ApiRequest } from "@/services/api/http.client";
 
 export const authApi = {
   login: async (request: ApiRequest, payload: LoginPayload) => {

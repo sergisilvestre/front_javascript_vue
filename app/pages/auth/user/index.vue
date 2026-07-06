@@ -7,8 +7,8 @@
         flex-direction: row;
         align-items: center;
       ">
-      <span style="margin-right: auto"> List of users </span>
-      <UiBaseButtonIcon type="create" to="/auth/user/create" />
+      <UiBaseTitle title="List of users" style="margin-right: auto"></UiBaseTitle>
+      <UiBaseButtonIcon type="create" @click="() => navigateTo('/auth/user/create')" />
     </div>
     <div style="
         margin-top: 2rem;
@@ -29,8 +29,8 @@
 </template>
 
 <script setup lang="ts">
-import type { User } from "../../../types/user";
-import { userApi } from "../../../../services/api/user.api";
+import type { User } from "@/types/user";
+import { userApi } from "@/services/api/user.api";
 
 definePageMeta({
   middleware: "auth",

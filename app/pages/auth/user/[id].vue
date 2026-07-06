@@ -1,40 +1,39 @@
 <template>
-    <div class="container">
+  <div class="container">
 
-        <div style="
+    <div style="
         font-size: 1.5rem;
         margin-top: 2rem;
         display: flex;
         flex-direction: row;
         align-items: center;
       ">
-            <span style="margin-right: auto"> Edit user </span>
-            <UiBaseButtonIcon type="delete" @click="deleteUser" />
-        </div>
-        <div style="display: flex; flex-direction: column; gap: 20px; padding: 20px;">
-            <div>
-                <UiBaseInput v-model="form.name" label="Name" placeholder="Enter your name" />
-                <UiBaseError :errorMsg="formErrors.name" />
-            </div>
-            <div>
-                <UiBaseInput v-model="form.email" label="Email" placeholder="Enter your email" />
-                <UiBaseError :errorMsg="formErrors.email" />
-            </div>
-            <div>
-
-                <UiBaseInput v-model="form.password" label="Password" placeholder="Enter your password"
-                    type="password" />
-                <UiBaseError :errorMsg="formErrors.password" />
-            </div>
-            <div>
-                <UiBaseButton @click="submitForm" title="Update" />
-            </div>
-        </div>
-
+      <UiBaseTitle title="Edit user" style="margin-right: auto"></UiBaseTitle>
+      <UiBaseButtonIcon type="delete" @click="deleteUser" />
     </div>
+    <form style="display: flex; flex-direction: column; gap: 20px; padding: 20px;">
+      <div>
+        <UiBaseInput v-model="form.name" label="Name" placeholder="Enter your name" />
+        <UiBaseError :errorMsg="formErrors.name" />
+      </div>
+      <div>
+        <UiBaseInput v-model="form.email" label="Email" placeholder="Enter your email" />
+        <UiBaseError :errorMsg="formErrors.email" />
+      </div>
+      <div>
+
+        <UiBaseInput v-model="form.password" label="Password" placeholder="Enter your password" type="password" />
+        <UiBaseError :errorMsg="formErrors.password" />
+      </div>
+      <div>
+        <UiBaseButton @click="submitForm" title="Update" />
+      </div>
+    </form>
+
+  </div>
 </template>
 <script setup lang="ts">
-import { userApi } from "../../../../services/api/user.api";
+import { userApi } from "@/services/api/user.api";
 
 definePageMeta({
   middleware: "auth",

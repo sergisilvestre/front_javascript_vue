@@ -1,5 +1,5 @@
-import type { AuthResponse, AuthUser } from "../types/auth";
-import { authService } from "../services/auth.service";
+import type { AuthResponse, AuthUser } from "@/types/auth";
+import { authService } from "@/services/auth.service";
 
 export const useAuth = () => {
   const token = useCookie<string | null>("token");

@@ -1,5 +1,5 @@
-import type { RequestOptions, ApiError } from "../../services/api/http.client";
-import { normalizeError } from "../../services/api/http.client";
+import type { RequestOptions, ApiError } from "@/services/api/http.client";
+import { normalizeError } from "../services/api/http.client";
 
 export const useApi = () => {
   const config = useRuntimeConfig();

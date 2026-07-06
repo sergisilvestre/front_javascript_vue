@@ -1,5 +1,5 @@
-import type { CreateUserPayload, UpdateUserPayload, User } from "../../app/types/user";
-import type { ApiRequest } from "./http.client";
+import type { CreateUserPayload, UpdateUserPayload, User } from "@/types/user";
+import type { ApiRequest } from "@/services/api/http.client";
 
 export const userApi = {
   list: async (request: ApiRequest) =>
