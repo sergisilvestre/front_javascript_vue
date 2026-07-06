@@ -27,19 +27,17 @@
     </div>
   </div>
 </template>
-
 <script setup lang="ts">
-import type { User } from "@/types/user";
-import { userApi } from "@/services/api/user.api";
+import { useUserService } from "@/services/user.service";
 
 definePageMeta({
   middleware: "auth",
 });
 
-const items = ref<User[]>([]);
-const api = useApi();
+const { items, fetchUsers } = useUserService();
 
-const response = await userApi.list(api.request);
-items.value = Array.isArray(response) ? response : (response.data ?? []);
+onMounted(() => {
+  fetchUsers();
+});
+
 </script>
-<style scoped></style>

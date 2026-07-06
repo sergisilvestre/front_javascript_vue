@@ -1,4 +1,6 @@
-<![CDATA[
+Here's an updated version of your README that includes `user.service.test.ts` and also tidies up a few formatting issues (unclosed code block, inconsistent `docker-compose`/`docker compose`, and test documentation).
+
+````markdown
 # Front JavaScript Vue (Nuxt + Docker)
 
 Frontend project based on Nuxt and Docker.
@@ -13,55 +15,82 @@ Frontend project based on Nuxt and Docker.
 
 ---
 
-## 🐳 Build Docker image
+## 🐳 Build Docker Image
 
 Build the Docker image:
 
 ```bash
 docker build -t front_javascript_vue .
+```
 
-## 
+Start the development environment:
+
+```bash
 docker compose up -d --build
 ```
 
-## 
+Format the project:
+
+```bash
 npx prettier . --write
+```
 
-##
+Run Ollama (optional):
+
+```bash
 ollama run qwen2.5-coder:3b
-
-### Testing and Verification
-
-To ensure that the application is working correctly, you can follow these steps:
-
-1. **Run Locally**: Use Docker Compose to start your development environment:
-   ```bash
-   docker-compose up -d --build
-   ```
-
-2. **Access the Application**: Once the services are running, access `http://localhost` in a web browser to view your application.
-
-3. **Test Functionality**: Ensure all expected features work as intended, including routing, data fetching, and any user interactions.
-
-4. **Verify Configuration**: Check that all necessary configurations are set correctly, such as environment variables, database connections, and API endpoints.
-
-5. **Handle Edge Cases**: Test edge cases to ensure the application handles unexpected inputs gracefully.
-
-6. **Security Testing**: Run security tests to identify potential vulnerabilities in your application, such as SQL injection or cross-site scripting (XSS).
-
-### Additional Resources
-
-- [Docker Compose Documentation](https://docs.docker.com/compose/)
-- [Nuxt.js Documentation](https://nuxtjs.org/)
+```
 
 ---
 
+## 🧪 Testing and Verification
+
+To ensure that the application is working correctly, follow these steps:
+
+### Run the application
+
+```bash
+docker compose up -d --build
+```
+
+### Run the test suite
+
+```bash
+npm test
+```
+
+or, if using Vitest:
+
+```bash
+npx vitest
+```
+
+### Available Tests
+
+- `__tests__/auth.service.test.ts` – Tests authentication service functionality.
+- `__tests__/user.service.test.ts` – Tests user service functionality.
+
+### Manual Verification
+
+1. Access the application at `http://localhost`.
+2. Verify routing works correctly.
+3. Verify API communication and data fetching.
+4. Check environment variables and configuration.
+5. Test edge cases and error handling.
+6. Run security checks for common vulnerabilities (e.g. XSS, injection attacks).
+
+---
+
+## 📚 Additional Resources
+
+- https://docs.docker.com/compose/
+- https://nuxt.com/docs
+
+---
 
 ## 💪 Project Structure
 
-Here's an overview of the project structure:
-
-```
+```text
 c:/Users/sergi/Documents/projects/front_javascript_vue/
 ├── app/
 │   ├── assets/
@@ -77,15 +106,20 @@ c:/Users/sergi/Documents/projects/front_javascript_vue/
 ├── public/
 │   ├── favicon.ico
 │   └── robots.txt
+├── __tests__/
+│   ├── auth.service.test.ts
+│   └── user.service.test.ts
 ├── services/
-└── nuxt.config.ts
-package-lock.json
-package.json
-README.md
-tsconfig.json
-vitest.config.ts
-__tests__/auth.service.test.ts
-docker-compose.yml
-dockerfile
-jest.config.cjs
-]]>
+├── docker-compose.yml
+├── Dockerfile
+├── jest.config.cjs
+├── nuxt.config.ts
+├── package-lock.json
+├── package.json
+├── README.md
+├── tsconfig.json
+└── vitest.config.ts
+```
+````
+
+This version fixes the Markdown formatting, documents both test files, and updates the project structure to include `user.service.test.ts`.

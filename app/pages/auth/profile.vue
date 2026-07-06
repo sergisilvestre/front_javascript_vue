@@ -32,71 +32,15 @@ definePageMeta({
   middleware: "auth",
 });
 
-const expiresAt = ref("-");
-const expiresIn = ref("-");
+const { expiresAt, expiresIn } = useSessionTTL();
 
-const updateTTL = () => {
-  const ttl = localStorage.getItem("ttl");
-
-  if (!ttl) {
-    expiresAt.value = "Not found";
-    expiresIn.value = "-";
-    return;
-  }
-
-  // Parse "2026-07-03 13:02:06"
-  const expiry = new Date(ttl.replace(" ", "T"));
-
-  if (isNaN(expiry.getTime())) {
-    expiresAt.value = "Invalid date";
-    expiresIn.value = "-";
-    return;
-  }
-
-  expiresAt.value = expiry.toLocaleString();
-
-  const diff = expiry.getTime() - Date.now();
-
-  if (diff <= 0) {
-    expiresIn.value = "Expired";
-    return;
-  }
-
-  const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-  const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
-  const minutes = Math.floor((diff / (1000 * 60)) % 60);
-  const seconds = Math.floor((diff / 1000) % 60);
-
-  const parts: string[] = [];
-
-  if (days > 0) parts.push(`${days}d`);
-  if (hours > 0) parts.push(`${hours}h`);
-  if (minutes > 0) parts.push(`${minutes}m`);
-
-  // Always show seconds
-  parts.push(`${seconds}s`);
-
-  expiresIn.value = parts.join(" ");
-};
-
-let timer: ReturnType<typeof setInterval>;
-
-onMounted(() => {
-  updateTTL();
-  timer = setInterval(updateTTL, 1000);
-});
-
-onUnmounted(() => {
-  clearInterval(timer);
-});
+const { refresh, revoke } = useAuth();
 
 const handleRefresh = async () => {
-  const { refresh } = useAuth();
   await refresh();
 };
 
 const handleRevoke = async () => {
-  const { revoke } = useAuth();
   await revoke();
 };
 </script>

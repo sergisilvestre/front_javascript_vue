@@ -1,4 +1,4 @@
-import { authService } from '../app/services/auth.service';
+import { authService } from '@/services/auth.service';
 
 describe('authService', () => {
   it('returns the normalized login response', async () => {

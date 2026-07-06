@@ -17,7 +17,9 @@
   ],
   "compilerOptions": {
     "paths": {
-      "@/*": ["./app/*"]
+      "@/*": ["./app/*"],
+      "#imports": ["./.nuxt/imports.d.ts"]
+
     },
     "strict": true,
     "types": ["jest", "node"]

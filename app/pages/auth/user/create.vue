@@ -23,55 +23,11 @@
   </div>
 </template>
 <script setup lang="ts">
-import { userApi } from "@/services/api/user.api";
+import { useUserService } from "@/services/user.service";
 
 definePageMeta({
   middleware: "auth",
 });
 
-const router = useRouter();
-
-const form = reactive({
-  name: "",
-  email: "",
-  password: "",
-});
-
-const formErrors = reactive<Record<string, string>>({
-  name: "",
-  email: "",
-  password: "",
-});
-
-const { request } = useApi();
-
-const resetFormErrors = () => {
-  Object.keys(formErrors).forEach((key) => {
-    formErrors[key] = "";
-  });
-};
-
-const submitForm = async () => {
-  resetFormErrors();
-
-  try {
-    await userApi.create(request, {
-      name: form.name,
-      email: form.email,
-      password: form.password,
-    });
-
-    await router.push("/auth/user");
-
-  } catch (error: any) {
-    const validationErrors = error?.validationErrors ?? {};
-
-    Object.keys(formErrors).forEach((key) => {
-      const fieldErrors = validationErrors[key];
-      formErrors[key] = Array.isArray(fieldErrors)
-        ? fieldErrors.join(", ")
-        : "";
-    });
-  }
-};
+const { form, formErrors, submitForm } = useUserService();
 </script>
